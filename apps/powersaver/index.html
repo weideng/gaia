@@ -45,23 +45,26 @@
     <ul>
       <li>
         <label>
-          <input type="checkbox" name="ril.radio.disabled" data-type="switch">
+          <input type="checkbox" name="wifi.enabled" data-type="switch">
           <span></span>
         </label>
       <span id="menuItem-wifi" class="menu-item" data-l10n-id="wifi">Wi-Fi</span>
       </li>
       <li>
         <label>
-          <input type="checkbox" name="ril.radio.disabled" data-type="switch">
+          <input type="checkbox" name="bluetooth.enabled" data-type="switch">
           <span></span>
         </label>
       <span id="menuItem-bluetooth" class="menu-item" data-l10n-id="bluetooth">Bluetooth</span>
       </li>
-      <li><span id="menuItem-display" class="menu-item"
-      data-l10n-id="screenlight">Screen Light
-        <button data-l10n-id="change" class="tone-select"
-           id="call-tone-selection">Change</button>
+      <li><span id="menuItem-display" class="menu-item">Screen Light
       </span>
+      </li>
+      <li id="brightness-manual">
+        <label>
+        <input type="range" name="screen.brightness" min="0.1" value="0.5" max="1" />
+        <span class="range-icons brightness"></span>
+        </label>
       </li>
     </ul>
     </section>

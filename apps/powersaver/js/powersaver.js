@@ -19,7 +19,6 @@ var Settings = {
   },
 
   init: function settings_init() {
-    alert("init");
     var settings = this.mozSettings;
     if (!settings)
       return;
@@ -77,9 +76,8 @@ var Settings = {
     var input = event.target;
     var type = input.dataset.type || input.type; // bug344618
     var key = input.name;
-
-    alert(key);
-
+    alert("type=" + type);
+    alert("key=" + key);
     var settings = window.navigator.mozSettings;
     if (!key || !settings)
       return;
@@ -108,7 +106,6 @@ var Settings = {
 
 
 window.addEventListener('load', function loadSettings() {
-  alert("===load");
   window.removeEventListener('load', loadSettings);
   window.addEventListener('change', Settings);
   window.addEventListener('click', Settings); // XXX really needed?
