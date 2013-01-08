@@ -16,7 +16,7 @@ var TaskManager = {
     container.innerHTML = "";
     navigator.mozApps.mgmt.getAllRunning().onsuccess = function mozAppGotAll(evt) {
       var apps = evt.target.result;
-      var listFragment = document.createDocumentFragment();
+      var list = document.createElement("ul");
       apps.forEach(function(app) {
         //if (!app.removable)
         //  return;
@@ -45,10 +45,10 @@ var TaskManager = {
         }
         item.appendChild(name);
         item.appendChild(bt);
-        listFragment.appendChild(item);
-        container.appendChild(listFragment);
+        list.appendChild(item);
+        //container.appendChild(listFragment);
       });
-      self.container.appendChild(listFragment);
+      self.container.appendChild(list);
     },
 
     navigator.mozApps.mgmt.getAllRunning().onerror = function ()

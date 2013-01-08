@@ -8,61 +8,14 @@
     "url": "https://github.com/mozilla-b2g/gaia"
   },
   "permissions": {
-    "mobileconnection":{},
-    "bluetooth":{},
-    "device-storage:pictures":{ "access": "readonly" },
-    "device-storage:music":{ "access": "readonly" },
-    "device-storage:videos":{ "access": "readonly" },
     "device-storage:apps":{ "access": "readonly" },
     "webapps-manage":{},
-    "permissions":{},
-    "settings":{ "access": "readwrite" },
-    "wifi-manage":{},
-    "attention":{},
-    "time":{},
-    "desktop-notification":{},
-    "power":{},
-    "telephony":{}
+    "permissions":{}
   },
-  "activities": {
-    "configure": {
-      "filters": {
-        "target": "device"
-       },
-      "disposition": "window"
-    },
-    "unlock": {
-      "filters": {
-        "target": "sim"
-       },
-      "disposition": "inline",
-      "href": "unlock_simpin.html",
-      "returnValue": true
-    }
-  },
-  "messages": ["bluetooth-requestconfirmation",
-               "bluetooth-requestpasskey",
-               "bluetooth-requestpincode",
-               "bluetooth-authorize",
-               "bluetooth-cancel",
-               "bluetooth-pairedstatuschanged",
-               "bluetooth-hfp-status-changed"],
   "locales": {
-    "ar": {
-      "name": "الضبط",
-      "description": "Gaia الضبط"
-    },
     "en-US": {
       "name": "TaskManager",
       "description": "Gaia Task Manager"
-    },
-    "fr": {
-      "name": "Paramètres",
-      "description": "Paramètres Gaia"
-    },
-    "tr": {
-      "name": "Ayarlar",
-      "description": "Gaia Ayarları"
     },
     "zh-TW": {
       "name": "任务管理器",

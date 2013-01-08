@@ -4,20 +4,14 @@
     <meta charset="utf-8"/>
     <meta http-equiv="pragma" content="no-cache"/>
     <title>TaskManager</title>
-    <link rel="stylesheet" type="text/css" href="taskmanager.css"/>
-    <!-- Specific code -->
-    <!--
+
     <script type="application/javascript" defer src="js/taskmanager.js"></script>
-    -->
     <style typt="text/css">
     body 
     {
        background:url("style/images/document_bg.png") repeat scroll 0 0 transparent;
     }
-    h2
-    {
-      font-size:1.0rem;
-    }
+
     ul li
     {
       list-style:none;
@@ -28,30 +22,29 @@
       border-bottom:0.1rem solid #E6E6E3;
       min-height:2rem;
     }
+    
+    li.classic 
+    {
+      position:relative;
+      left:-1rem
+    }
+
     input
     {
       position:absolute;
-      right:0%
-    }
-    div
-    {
-      bottom:2rem;
-    }
-    div.name
-    {
-     display:block;
-     border-bottom:0.1rem;
+      right:0%    
     }
     </style>
   </head>
   <body>
-  <h2 style="display:block;">Running Applications</h2>
-  <div id="container">
+  <h2 style="font-size:1.0rem">Running Applications</h2>
   <ul>
-    <li>hello</li>
-    <li>world</li>
+  <li>
+    <label>taskmanager</label>
+    <input type="button" value="close">
+  </li>
+  <li>demo</li>
   </ul>
-  </div>
   </body>
 </html>
 
