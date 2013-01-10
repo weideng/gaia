@@ -1,0 +1,45 @@
+{
+  "name": "PowerSaver",
+  "description": "Power Saver",
+  "type": "certified",
+  "launch_path": "/index.html",
+  "developer": {
+    "name": "The Gaia Team",
+    "url": "https://github.com/mozilla-b2g/gaia"
+  },
+
+  "permissions": {
+    "mobileconnection":{},
+    "bluetooth":{},
+    "device-storage:pictures":{ "access": "readonly" },
+    "device-storage:music":{ "access": "readonly" },
+    "device-storage:videos":{ "access": "readonly" },
+    "device-storage:apps":{ "access": "readonly" },
+    "webapps-manage":{},
+    "permissions":{},
+    "settings":{ "access": "readwrite" },
+    "wifi-manage":{},
+    "attention":{},
+    "time":{},
+    "desktop-notification":{},
+    "power":{},
+    "telephony":{}
+  },
+
+  "locales": {
+    "en-US": {
+      "name": "Power Saver",
+      "description": "Gaia Power Saver"
+    },
+    "zh-TW": {
+      "name": "省电王",
+      "description": "Gaia 省电王"
+    }
+  },
+  "default_locale": "en-US",
+  "icons": {
+    "120": "/style/icons/Power.png",
+    "60": "/style/icons/60/Power.png"
+  },
+  "orientation": "portrait-primary"
+}

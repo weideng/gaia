@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="pragma" content="no-cache">
+    <title>Power Saver</title>
+
+    <!-- Common style -->
+    <link rel="stylesheet" type="text/css" href="shared/style/headers.css"/>
+    <link rel="stylesheet" type="text/css" href="shared/style/switches.css"/>
+    <link rel="stylesheet" type="text/css" href="shared/style/buttons.css"/>
+    <link rel="stylesheet" type="text/css" href="shared/style/action_menu.css"/>
+    <link rel="stylesheet" type="text/css" href="shared/style/confirm.css"/>
+    <link rel="stylesheet" type="text/css" href="shared/style/input_areas.css"/>
+
+    <!-- Specific style -->
+    <link rel="stylesheet" type="text/css" href="style/lists.css"/>
+    <link rel="stylesheet" type="text/css" href="style/icons.css"/>
+    <link rel="stylesheet" type="text/css" href="style/settings.css"/>
+    <link rel="stylesheet" type="text/css" href="style/simcard.css"/>
+    <link rel="stylesheet" type="text/css" href="style/phone_lock.css"/>
+    <link rel="stylesheet" type="text/css" href="style/apps.css"/>
+
+    <!-- Shared resources -->
+    <link rel="resource" type="application/json" href="shared/resources/apn.json"/>
+    <link rel="resource" type="application/json" href="shared/resources/languages.json"/>
+
+    <!-- Localization -->
+    <link rel="resource" type="application/l10n" href="locales/locales.ini"/>
+    <link rel="resource" type="application/l10n" href="shared/locales/date.ini"/>
+    <link rel="resource" type="application/l10n" href="shared/locales/permissions.ini"/>
+    <script type="application/javascript" src="shared/js/l10n.js"></script>
+    <script type="application/javascript" src="shared/js/l10n_date.js"></script>  
+
+    <script type="application/javascript" defer src="js/utils.js"></script>
+    <script type="application/javascript" defer src="js/powersaver.js"></script>
+
+  </head>
+
+  <body class="skin-organic">
+    <section id="root" class="current" role="region">
+    <header>
+      <h1>Power Saver Settings</h1>
+    </header>
+    <ul>
+      <li>
+        <label>
+          <input id="wifi-checkbox" type="checkbox" name="wifi.enabled" data-type="switch"/>
+          <span></span>
+        </label>
+      <span id="menuItem-wifi" class="menu-item" data-l10n-id="wifi">Wi-Fi</span>
+      </li>
+      <li>
+        <label>
+          <input id="bluetooth-checkbox" type="checkbox" name="bluetooth.enabled" data-type="switch"/>
+          <span></span>
+        </label>
+      <span id="menuItem-bluetooth" class="menu-item" data-l10n-id="bluetooth">Bluetooth</span>
+      </li>
+      <li><span id="menuItem-display" class="menu-item">Screen Brightness
+      </span>
+      </li>
+      <li id="brightness-manual">
+        <label>
+        <input id="brightness" type="range" name="screen.brightness" min="0.1" value="0.5" max="1" />
+        <span class="range-icons brightness"></span>
+        </label>
+      </li>
+    </ul>
+    </section>
+ </body>
+
+</html>
