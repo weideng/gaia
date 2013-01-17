@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <title>TaskManager</title>
+
+    <!-- shared helper library -->
+    <script type="application/javascript" defer src="shared/js/manifest_helper.js"></script>
+    <link rel="stylesheet" type="text/css" href="taskmanager.css"/>
+    <!-- Specific code -->
+    <script type="application/javascript" defer src="js/taskmanager.js"></script>
+    <style typt="text/css">
+    * {
+    margin:0;
+    padding:0
+    }
+
+    html, body {
+    font-family: "MozTT",sans-serif;
+    font-size: 10px;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    width: 100%;
+    }
+    
+    header {
+    text-align:center;
+    color:white;
+    font-family:"MozTT",sans-serif;
+    }
+    h1
+    {
+    height:3rem;
+    background:url("style/images/pattern.png") repeat scroll 0 0 transparent;
+    }
+    h2
+    {
+    text-align:left;
+    background-color:grey;
+    padding-left:1rem;
+    padding-top:2rem;
+    background-color:grey;
+    height:4rem;
+    }
+    h2 >input 
+    {
+    background-color:red;
+    position:absolute;
+    right:2rem;
+    border:none;
+    font-size:18px;
+    padding:0.6rem;
+    margin-top:-0.6rem;
+    }
+    ul li
+    {
+      list-style:none;
+      display:block;
+      font-size:2rem;
+      border-bottom:0.1rem solid #E6E6E3;
+      min-height:6rem;
+    }
+    li > input
+    {
+      float:right;
+      font-size:2rem;
+      height:3rem;
+      width:6rem;
+      margin-top:1.5rem;
+      margin-right:1rem;
+    }
+
+    li >img {
+      float:left;
+      padding-left:1rem;
+      padding-top:1.5rem;
+      width:3rem;
+      height:3rem;
+    }
+
+    li >span {
+      padding-top:1.8rem;
+      padding-left:2rem;
+      float:left;
+    }
+
+    div
+    {
+      overflow-y:scroll;
+      height:40rem;
+    }
+    </style>
+  </head>
+  <body>
+  <header>
+  <h1>task manager</h1>
+  <h2><span>Running applications:</span><span id='count'>0</span> <input id='closeAll' type="button" value="Close All"</h2>
+  </header>
+  <div id="container">
+  </div>
+  </body>
+</html>
+

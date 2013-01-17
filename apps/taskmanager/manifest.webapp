@@ -1,0 +1,31 @@
+{
+  "name": "taskmanager",
+  "description": "Gaia taskmanager",
+  "type": "certified",
+  "launch_path": "/index.html",
+  "developer": {
+    "name": "The Gaia Team",
+    "url": "https://github.com/mozilla-b2g/gaia"
+  },
+  "permissions": {
+    "device-storage:apps":{ "access": "readonly" },
+    "webapps-manage":{},
+    "permissions":{}
+  },
+  "locales": {
+    "en-US": {
+      "name": "TaskManager",
+      "description": "Gaia Task Manager"
+    },
+    "zh-TW": {
+      "name": "任务管理器",
+      "description": "Gaia 任务管理器"
+    }
+  },
+  "default_locale": "en-US",
+  "icons": {
+    "120": "/style/icons/Tm.png",
+    "60": "/style/icons/60/Tm.png"
+  },
+  "orientation": "portrait-primary"
+}
