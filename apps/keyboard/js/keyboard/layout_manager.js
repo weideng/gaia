@@ -269,6 +269,11 @@ LayoutManager.prototype._updateModifiedLayout = function() {
     spaceKeyObject.ratio -= 1;
     spaceKeyRow.splice(spaceKeyCount, 0, imeSwitchKey);
     spaceKeyCount++;
+  } else {
+    for (var i = 0; i < spaceKeyRow.length; i++) {
+      if (spaceKeyRow[i].singleImeRatio)
+        spaceKeyRow[i].ratio = spaceKeyRow[i].singleImeRatio;
+    }
   }
 
   // Respond to different input types
@@ -278,8 +283,8 @@ LayoutManager.prototype._updateModifiedLayout = function() {
       ratio: 1,
       keyCode: 46
     };
-    if (layout.alt && layout.alt['.']) {
-      periodKey.className = 'alternate-indicator';
+    if (layout.alt && (layout.alt['.'] || layout.alt['。'] )) {
+        periodKey.className = 'alternate-indicator';
     }
 
     switch (basicInputType) {
@@ -318,11 +323,9 @@ LayoutManager.prototype._updateModifiedLayout = function() {
         var overwrites = layout.textLayoutOverwrite || {};
 
         // Add comma key if we asked too,
-        // Only add the key at alternative pages or if
-        // we didn't add the switching key.
         if (overwrites[','] !== false &&
             (this.currentLayoutPage !== this.LAYOUT_PAGE_DEFAULT ||
-            !needsSwitchingKey)) {
+            !needsSwitchingKey || layout.needsCommaKey)) {
           var commaKey = {
             value: ',',
             ratio: 1,
