@@ -28,6 +28,10 @@ const IMERender = (function() {
   var cachedWindowHeight = -1;
   var cachedWindowWidth = -1;
 
+  var selectFirstTimeOutId;
+  var timeOutId;
+  var paint = false;
+
   const ariaLabelMap = {
     '⇪': 'upperCaseKey2',
     '⌫': 'backSpaceKey2',
@@ -192,6 +196,20 @@ const IMERender = (function() {
     layout.upperCase = layout.upperCase || {};
 
     var content = document.createDocumentFragment();
+
+    // Builds handwriting pad if any.
+    var handwriting = layout.handwriting;
+    if (handwriting) {
+      var pad = document.createElement('canvas');
+      pad.className = 'handwriting-pad';
+      pad.style.cssFloat = 'left';
+      var pixelWidth = placeHolderWidth * handwriting.width;
+      pad.style.width = pixelWidth + 'px';
+      pad.width = pixelWidth;
+      pad.dataset.rowspan = handwriting.rowspan;
+      content.appendChild(pad);
+    }
+
     layout.keys.forEach((function buildKeyboardRow(row, nrow) {
       var kbRow = document.createElement('div');
       var rowLayoutWidth = 0;
@@ -271,6 +289,10 @@ const IMERender = (function() {
         kbRow.appendChild(buildKey(outputChar, className, keyWidth + 'px',
           dataset, key.altNote, attributeList));
       }));
+
+      if (handwriting && handwriting.rowspan > nrow) {
+        rowLayoutWidth += handwriting.width;
+      }
 
       kbRow.dataset.layoutWidth = rowLayoutWidth;
 
@@ -848,6 +870,19 @@ const IMERender = (function() {
     var rows = activeIme.querySelectorAll('.keyboard-row');
 
     setKeyWidth();
+
+    // Set the height of the handwriting pad.
+    var pad = activeIme.querySelector('.handwriting-pad');
+    if (pad) {
+      var rowCount = rows.length || 3;
+      var candidatePanel = activeIme.querySelector('.keyboard-candidate-panel');
+      var candidatePanelHeight = candidatePanel ? candidatePanel.clientHeight : 0;
+      var rowHeight = rows[0].clientHeight;
+      var pixelHeight = Math.floor(rowHeight * pad.dataset.rowspan);
+      console.log('pixelHeight:' + pixelHeight);
+      pad.height = pixelHeight;
+      pad.style.height = pixelHeight + 'px';
+    }
 
     // XXX We have to wait for layout to complete before
     // return this function
