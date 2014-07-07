@@ -582,6 +582,7 @@ var KeyboardManager = {
   },
 
   hideKeyboard: function km_hideKeyboard() {
+    return;
     // prevent hidekeyboard trigger again while 'appwillclose' is fired.
     var transitionState = this.transitionManager.currentState;
     if ((transitionState === this.transitionManager.STATE_HIDDEN) ||
