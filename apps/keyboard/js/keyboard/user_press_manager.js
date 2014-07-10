@@ -76,6 +76,13 @@ UserPressManager.prototype.stop = function() {
 };
 
 UserPressManager.prototype.handleEvent = function(evt) {
+  // If event's target is handwriting pad, skip it
+  // And it will be handled in handwring ime module.
+  var canvas = evt.target.classList.contains('handwriting-pad');
+  if (canvas) {
+    return;
+  }
+
   var touch, touchId, el, i;
   switch (evt.type) {
     case 'contextmenu':

@@ -5,6 +5,32 @@
 
 (function() {
 
+var debugging = true;
+var debug = function _debug(str) {
+  if (!debugging) {
+    return;
+  }
+
+  var done = false;
+  if (typeof window != 'undefined' && window.dump) {
+    window.dump('handwriting: ' + str + '\n');
+    done = true;
+  }
+  if (typeof console != 'undefined' && console.log) {
+    console.log('handwriting: ' + str);
+    if (arguments.length > 1) {
+      console.log.apply(this, arguments);
+    }
+    done = true;
+  }
+  if (done) {
+    return;
+  }
+  if (typeof Test != 'undefined') {
+    print('handwriting: ' + str + '\n');
+  }
+};
+
 function importScripts(urls, callback) {
   if (urls.length > 1) {
     // Load the nth file as soon as everything up to the
@@ -126,6 +152,30 @@ IMEngine.prototype = {
   _timeOutId: null,
   _writing: false,
   _isInited: false,
+  _container: null,
+  _writingPad: null,
+  self: this,
+
+  _onTouchStart: function(evt) {
+    debug('touch start');
+    evt.preventDefault();
+    evt.stopPropagation();
+    this.canvasMouseDown(evt.touches[0]);
+  },
+
+  _onTouchMove: function(evt) {
+    debug('touch move');
+    evt.preventDefault();
+    evt.stopPropagation();
+    this.canvasMouseMove(evt.touches[0]);
+  },
+
+  _onTouchEnd: function(evt) {
+    debug('touch end');
+    evt.preventDefault();
+    evt.stopPropagation();
+    this.canvasMouseUp(evt.touches[0]);
+  },
 
   isInCanvas: function(event) {
     var canvas = IMERender.activeIme.querySelector('.handwriting-pad');
@@ -155,6 +205,7 @@ IMEngine.prototype = {
     var point = Board.getMousePoint(event);
     Board.addStrokePoint(point[0], point[1]);
     this._writing = true;
+    // debug('mouse down x:' + point[0] + 'y:' + point[1]);
     Render.draw(point[0], point[1], true);
   },
 
@@ -162,13 +213,15 @@ IMEngine.prototype = {
     if (!this._writing) {
       return;
     }
-    
+
     var point = Board.getMousePoint(event);
     Board.addStrokePoint(point[0], point[1]);
+    //debug('mouse move x:' + point[0] + 'y:' + point[1]);
     Render.draw(point[0], point[1], false);
   },
 
   canvasMouseUp: function engine_mouseup(event) {
+    //debug('mouse up');
     this._timeOutId = setTimeout(Board.sendStrokePoints.bind(Board), 500);
     this._writing = false;
     Board.addStrokePoint(-1, 0);
@@ -349,7 +402,13 @@ IMEngine.prototype = {
     if (!canvas) {
       return;
     };
+
     Render.init(canvas.width, canvas.height);
+    this._container = IMERender.ime;
+    this._container.addEventListener('touchstart', this);
+    this._container.addEventListener('mousedown', this);
+    this._container.addEventListener('mouseup', this);
+    this._container.addEventListener('mousemove', this);
   },
 
   /**
@@ -361,12 +420,42 @@ IMEngine.prototype = {
     if (!this._isActive)
       return;
 
+    this._container.removeEventListener('touchstart', this);
+    this._container.removeEventListener('mousedown', this);
+    this._container.removeEventListener('mouseup', this);
+    this._container.removeEventListener('mousemove', this);
+    this._container = null;
+
     this._isActive = false;
 
     this._resetKeypressQueue();
     this.empty();
+  },
 
-    var self = this;
+  handleEvent: function(evt) {
+    // handle events fired from handwriting pad
+    if (evt.target.classList.contains('handwriting-pad')) {
+      switch(evt.type) {
+        case 'touchstart':
+          this._onTouchStart(evt);
+          break;
+        case 'touchmove':
+          this._onTouchMove(evt);
+          break;
+        case 'touchend':
+          this._onTouchEnd(evt);
+          break;
+        case 'mousedown':
+          this.canvasMouseDown(evt);
+          break;
+        case 'mouseup':
+          this.canvasMouseUp(evt);
+          break;
+        case 'mousemove':
+          this.canvasMouseMove(evt);
+          break;
+      }
+    }
   }
 };
 
@@ -393,11 +482,22 @@ var Render = {
   },
 
   draw: function(x, y, start) {
+    var canvas = IMERender.activeIme.querySelector('.handwriting-pad');
+    /*
+    this._ctx = canvas.getContext('2d');
+    this._ctx.strokeStyle = "#df4b26";
+    this._ctx.lineJoin = "round";
+    this._ctx.lineWidth = 5;
+    */
+    this._width = canvas.width;
+    this._height = canvas.height;
+
     this._ctx.beginPath();
     if (start) {
       this._lastX = x-1;
       this._lastY = y;
     }
+    debug('draw x:' + x + ' y:' + y);
     this._ctx.moveTo(this._lastX, this._lastY);
     this._ctx.lineTo(x, y);
     this._ctx.closePath();
