@@ -473,7 +473,8 @@ suite('InputMethodManager', function() {
       }, {
         suggest: true,
         correct: true,
-        correctPunctuation: true
+        correctPunctuation: true,
+        layoutName: app.layoutManager.currentLayoutName
       }));
       assert.equal(activateStub.getCall(0).thisValue,
         imEngine);
@@ -546,7 +547,8 @@ suite('InputMethodManager', function() {
       }, {
         suggest: true,
         correct: true,
-        correctPunctuation: true
+        correctPunctuation: true,
+        layoutName: app.layoutManager.currentLayoutName
       }));
       assert.equal(activateStub.getCall(0).thisValue, imEngine);
     }, function() {
@@ -608,7 +610,8 @@ suite('InputMethodManager', function() {
       }, {
         suggest: true,
         correct: true,
-        correctPunctuation: true
+        correctPunctuation: true,
+        layoutName: app.layoutManager.currentLayoutName
       }));
       assert.equal(activateStub.getCall(0).thisValue,
         imEngine);
@@ -647,7 +650,8 @@ suite('InputMethodManager', function() {
       }, {
         suggest: true,
         correct: true,
-        correctPunctuation: true
+        correctPunctuation: true,
+        layoutName: app.layoutManager.currentLayoutName
       }));
       assert.equal(activateStub.getCall(1).thisValue,
         imEngine);
