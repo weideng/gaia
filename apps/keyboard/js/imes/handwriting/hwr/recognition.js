@@ -30,6 +30,12 @@ var Recognition = {
     return this._CharacterRecognize(this._strokeBuffer.byteOffset);
   },
 
+  getPrediction: function(words) {
+    if (this._getPrediction) {
+      return this._getPrediction(words);
+    }
+  },
+
   _init: function(lang) {
     this._inited = false;
     var model = '';
@@ -46,6 +52,14 @@ var Recognition = {
                       ['string', 'number', 'number'],
                       [model, 140, 140])) {
       return false;
+    }
+
+    if (Module.ccall('InitPrediction',
+                      'number',
+                      ['string'],
+                      ['dict_pinyin.data'])) {
+      this._getPrediction =
+        Module.cwrap('GetPrediction', 'string', ['string']);
     }
 
     this._CharacterRecognize =
@@ -66,7 +80,8 @@ var Recognition = {
 
   _strokeBuffer: null,
   _CharacterRecognize: null,
-  _lang: ''
+  _lang: '',
+  _getPrediction: null
 };
 
 var Module = {

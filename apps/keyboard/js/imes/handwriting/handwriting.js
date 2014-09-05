@@ -109,6 +109,11 @@ IMEngine.prototype = {
   _firstCandidate: '',
   _keypressQueue: [],
   _isWorking: false,
+  _manualSelect: true,
+  _isPredicting: false,
+
+  // for prediction
+  _words: '',
   _cachedPoints: [],
 
   _isActive: false,
@@ -123,9 +128,10 @@ IMEngine.prototype = {
   /**
    * Send candidates list and change composition.
    * @param {Array.<string>} candidates The candidates to be sent.
+   * @param {Boolean} state Change composition flag.
    * @return {void}  No return value.
    */
-  _sendCandidates: function engine_sendCandidates(candidates) {
+  _sendCandidates: function engine_sendCandidates(candidates, state) {
     var list = [];
     var len = candidates.length;
     for (var id = 0; id < len; id++) {
@@ -138,6 +144,10 @@ IMEngine.prototype = {
     }
 
     this._glue.sendCandidates(list);
+
+    if (!state) {
+      return;
+    }
 
     // If candidates is not empty, set composition with its first element,
     // or end composition.
@@ -212,7 +222,7 @@ IMEngine.prototype = {
       return;
     }
     var str = Recognition.recognize(this._cachedPoints);
-    this._sendCandidates(str);
+    this._sendCandidates(str, true);
     this._cachedPoints = [];
   },
 
@@ -272,6 +282,22 @@ IMEngine.prototype = {
     this._glue.sendString(text);
     this.empty();
     this._start();
+
+    if (!this._manualSelect) {
+      this._manualSelect = true;
+      return;
+    }
+
+    if (!this._isPredicting) {
+      this._words = text;
+      this._isPredicting = true;
+    } else {
+      this._words += text;
+    }
+    var prediction = Recognition.getPrediction(this._words);
+    if (prediction) {
+      this._sendCandidates(prediction.split(' '), false);
+    }
   },
 
   /**
@@ -280,7 +306,7 @@ IMEngine.prototype = {
   empty: function engine_empty() {
     IMEngineBase.prototype.empty.call(this);
     this._firstCandidate = '';
-    this._sendCandidates([]);
+    this._sendCandidates([], true);
   },
 
   /**
@@ -318,10 +344,13 @@ IMEngine.prototype = {
   sendStrokePoints: function engine_sendStrokePoints(strokePoints) {
     if (this._isInited) {
       var str = Recognition.recognize(strokePoints);
-      if (this._firstCandidate) {
+      if (this._firstCandidate && !this._isPredicting) {
+        this._manualSelect = false;
         this.select(this._firstCandidate, {});
       }
-      this._sendCandidates(str);
+      this._sendCandidates(str, true);
+      this._isPredicting = false;
+      this._words = '';
       return;
     }
 
