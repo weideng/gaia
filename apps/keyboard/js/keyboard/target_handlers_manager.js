@@ -1,24 +1,33 @@
 'use strict';
 
-/* global ActiveTargetsManager, KeyEvent,
+/* global ActiveTargetsManager, KeyEvent, HandwritingPadsManager,
           DefaultTargetHandler, NullTargetHandler, SpaceKeyTargetHandler,
           CandidateSelectionTargetHandler, CompositeTargetHandler,
           PageSwitchingTargetHandler, CapsLockTargetHandler,
           SwitchKeyboardTargetHandler, ToggleCandidatePanelTargetHandler,
-          DismissSuggestionsTargetHandler, BackspaceTargetHandler */
+          DismissSuggestionsTargetHandler, BackspaceTargetHandler,
+          HandwritingPadTargetHandler */
 
 (function(exports) {
 
 var TargetHandlersManager = function(app) {
   this.handlers = undefined;
   this.activeTargetsManager = null;
+  this.handwritingPadsManager = null;
   this.app = app;
+
+  this.ignoreNewUserPress = false;
+  this.ignoreMoveInActions = false;
+  this.ignoreMoveOutActions = false;
 };
 
 TargetHandlersManager.prototype.start = function() {
   this.app.console.log('TargetHandlersManager.start()');
 
   this.handlers = new WeakMap();
+
+  this.handwritingPadsManager = new HandwritingPadsManager(this.app);
+  this.handwritingPadsManager.start();
 
   var activeTargetsManager = this.activeTargetsManager =
     new ActiveTargetsManager(this.app);
@@ -29,6 +38,8 @@ TargetHandlersManager.prototype.start = function() {
     this._callTargetAction.bind(this, 'activate', true, false);
   activeTargetsManager.ontargetlongpressed =
     this._callTargetAction.bind(this, 'longPress', false, false);
+  activeTargetsManager.ontargetmoved =
+    this._callTargetAction.bind(this, 'move', false, true);
   activeTargetsManager.ontargetmovedout =
     this._callTargetAction.bind(this, 'moveOut', false, true);
   activeTargetsManager.ontargetmovedin =
@@ -41,6 +52,11 @@ TargetHandlersManager.prototype.start = function() {
     this._callTargetAction.bind(this, 'doubleTap', false, true);
   activeTargetsManager.onnewtargetwillactivate =
     this._callTargetAction.bind(this, 'newTargetActivate', false, false);
+
+  activeTargetsManager.getStates = function(state) {
+    return this[state];
+  }.bind(this);
+
   activeTargetsManager.start();
 };
 
@@ -50,6 +66,9 @@ TargetHandlersManager.prototype.stop = function() {
   this.handlers = null;
   this.activeTargetsManager.stop();
   this.activeTargetsManager = null;
+
+  this.handwritingPadsManager.stop();
+  this.handwritingPadsManager = null;
 };
 
 // This method is the scaffold of our partical functions:
@@ -75,9 +94,14 @@ TargetHandlersManager.prototype.stop = function() {
 TargetHandlersManager.prototype._callTargetAction = function(action,
                                                              setHandler,
                                                              deleteHandler,
-                                                             target) {
+                                                             target,
+                                                             press) {
   this.app.console.log('TargetHandlersManager._callTargetAction()',
     action, setHandler, deleteHandler, target);
+
+  if (this._filterActions(action, target)) {
+    return;
+  }
 
   var handler;
   if (this.handlers.has(target)) {
@@ -100,7 +124,7 @@ TargetHandlersManager.prototype._callTargetAction = function(action,
     }
   }
 
-  handler[action]();
+  handler[action](press);
 };
 
 // This method decide which of the TargetHandler is the right one to
@@ -121,6 +145,9 @@ TargetHandlersManager.prototype._createHandlerForTarget = function(target) {
     handler = new CandidateSelectionTargetHandler(target, this.app);
   } else if ('compositeKey' in target) {
     handler = new CompositeTargetHandler(target, this.app);
+  } else if (target.isHandwritingPad) {
+    handler = new HandwritingPadTargetHandler(target, this.app,
+                                              this.handwritingPadsManager);
   } else if ('keyCode' in target) {
     switch (target.keyCode) {
       // Delete is a special key, it reacts when pressed not released
@@ -156,6 +183,22 @@ TargetHandlersManager.prototype._createHandlerForTarget = function(target) {
   }
 
   return handler;
+};
+
+TargetHandlersManager.prototype._filterActions = function(action,target) {
+  switch(action) {
+    case 'activate':
+      this.ignoreNewUserPress = target.isHandwritingPad;
+      return this.ignoreNewUserPress;
+    case 'moveOut':
+      if (this.ignoreNewUserPress) {
+        return true;
+      }
+      break;
+  }
+  if (target.isHandwritingPad) {
+  }
+  return false;
 };
 
 exports.TargetHandlersManager = TargetHandlersManager;

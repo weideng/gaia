@@ -1,7 +1,6 @@
 'use strict';
 
-/* global UserPressManager, AlternativesCharMenuManager,
-   HandwritingPadsManager */
+/* global UserPressManager, AlternativesCharMenuManager */
 
 (function(exports) {
 
@@ -18,10 +17,10 @@
 var ActiveTargetsManager = function(app) {
   this.app = app;
   this.activeTargets = null;
+  this.blockNewUserPress = false;
 
   this.userPressManager = null;
   this.alternativesCharMenuManager = null;
-  this.handwritingPadsManager = null;
 
   this.longPressTimer = undefined;
 
@@ -31,6 +30,7 @@ var ActiveTargetsManager = function(app) {
 
 ActiveTargetsManager.prototype.ontargetactivated = null;
 ActiveTargetsManager.prototype.ontargetlongpressed = null;
+ActiveTargetsManager.prototype.ontargetmoved = null;
 ActiveTargetsManager.prototype.ontargetmovedout = null;
 ActiveTargetsManager.prototype.ontargetmovedin = null;
 ActiveTargetsManager.prototype.ontargetcommitted = null;
@@ -60,9 +60,6 @@ ActiveTargetsManager.prototype.start = function() {
   this.alternativesCharMenuManager =
     new AlternativesCharMenuManager(this.app);
   this.alternativesCharMenuManager.start();
-
-  this.handwritingPadsManager = new HandwritingPadsManager(this.app);
-  this.handwritingPadsManager.start();
 };
 
 ActiveTargetsManager.prototype.stop = function() {
@@ -74,9 +71,6 @@ ActiveTargetsManager.prototype.stop = function() {
 
   this.alternativesCharMenuManager.stop();
   this.alternativesCharMenuManager = null;
-
-  this.handwritingPadsManager.stop();
-  this.handwritingPadsManager = null;
 
   clearTimeout(this.longPressTimer);
   this.doubleTapTimer = undefined;
@@ -110,11 +104,6 @@ ActiveTargetsManager.prototype._handlePressStart = function(press, id) {
     return;
   }
 
-  // Ignore new touches when user is writing.
-  if (this.handwritingPadsManager.isWriting) {
-    return;
-  }
-
   // Notify current targets about the new touch.
   if (typeof this.onnewtargetwillactivate === 'function') {
     this.activeTargets.forEach(function(target, id) {
@@ -122,13 +111,12 @@ ActiveTargetsManager.prototype._handlePressStart = function(press, id) {
     }, this);
   }
 
-  var target = press.target;
-  this.activeTargets.set(id, target);
-
-  if (this.handwritingPadsManager.isHandwritingPad(press.target)) {
-    this.handwritingPadsManager.handlePressStart(press);
+  if (this.blockNewUserPress) {
     return;
   }
+
+  var target = press.target;
+  this.activeTargets.set(id, target);
 
   if (typeof this.ontargetactivated === 'function') {
     this.ontargetactivated(target);
@@ -179,8 +167,10 @@ ActiveTargetsManager.prototype._handlePressMove = function(press, id) {
     return;
   }
 
-  // Do nothing if the element is unchanged.
   if (target === oldTarget) {
+    if (typeof this.ontargetmoved === 'function') {
+      this.ontargetmoved(target, press);
+    }
     return;
   }
 
@@ -236,10 +226,12 @@ ActiveTargetsManager.prototype._handlePressEnd = function(press, id) {
   var target = this.activeTargets.get(id);
   this.activeTargets.delete(id);
 
+  /*
   if (this.handwritingPadsManager.isWriting) {
     this.handwritingPadsManager.handlePressEnd(target);
     return;
   }
+  */
 
   this.alternativesCharMenuManager.hide();
   clearTimeout(this.longPressTimer);
